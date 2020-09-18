@@ -17,7 +17,7 @@ services:
 
   orderer.example.com:
     container_name: orderer.example.com
-    image: hyperledger/fabric-orderer:$IMAGE_TAG
+    image: themedium/fabric-orderer:$IMAGE_TAG
     environment:
       - FABRIC_LOGGING_SPEC=INFO
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
@@ -43,14 +43,17 @@ services:
         - ../organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp:/var/hyperledger/orderer/msp
         - ../organizations/ordererOrganizations/example.com/orderers/orderer.example.com/tls/:/var/hyperledger/orderer/tls
         - orderer.example.com:/var/hyperledger/production/orderer
+        - ../../bin/linux-amd64:/usr/local/bin
+        - ../config/orderer.yaml:/etc/hyperledger/fabric/orderer.yaml
     ports:
       - 7050:7050
+      - 2001:2345
     networks:
       - test
 
   peer0.org1.example.com:
     container_name: peer0.org1.example.com
-    image: hyperledger/fabric-peer:$IMAGE_TAG
+    image: themedium/fabric-peer:$IMAGE_TAG
     environment:
       #Generic peer variables
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
@@ -81,16 +84,19 @@ services:
         - ../organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/msp:/etc/hyperledger/fabric/msp
         - ../organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls:/etc/hyperledger/fabric/tls
         - peer0.org1.example.com:/var/hyperledger/production
+        - ../../bin/linux-amd64:/usr/local/bin
+        - ../config/core.yaml:/etc/hyperledger/fabric/core.yaml
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: peer node start
     ports:
       - 7051:7051
+      - 2002:2345
     networks:
       - test
 
   peer0.org2.example.com:
     container_name: peer0.org2.example.com
-    image: hyperledger/fabric-peer:$IMAGE_TAG
+    image: themedium/fabric-peer:$IMAGE_TAG
     environment:
       #Generic peer variables
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
@@ -121,9 +127,12 @@ services:
         - ../organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/msp:/etc/hyperledger/fabric/msp
         - ../organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls:/etc/hyperledger/fabric/tls
         - peer0.org2.example.com:/var/hyperledger/production
+        - ../../bin/linux-amd64:/usr/local/bin
+        - ../config/core.yaml:/etc/hyperledger/fabric/core.yaml
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: peer node start
     ports:
       - 9051:9051
+      - 2003:2345
     networks:
       - test
